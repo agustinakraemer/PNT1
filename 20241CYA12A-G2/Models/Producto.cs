@@ -15,6 +15,14 @@ namespace _20241CYA12A_G2.Models
         public int CategoriaId { get; set; }
         public Categoria? Categoria { get; set; }
 
+        public int DescuentoId { get; set; }
+        public ICollection<Descuento>? Descuentos { get; set;}
+
+        public int CarritoItemId { get; set; }
+        public ICollection<CarritoItem>? CarritoItems { get; set; }
+
+
+
 
     }
 }

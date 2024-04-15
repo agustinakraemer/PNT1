@@ -11,6 +11,7 @@ namespace _20241CYA12A_G2.Models
         public int Stock { get; set; }
         public decimal Costo { get; set; }
 
+        //Relaciones
         public int CategoriaId { get; set; }
         public Categoria? Categoria { get; set; }
 

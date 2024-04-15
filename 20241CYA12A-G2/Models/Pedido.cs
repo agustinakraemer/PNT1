@@ -11,7 +11,11 @@ namespace _20241CYA12A_G2.Models
         public decimal Total { get; set; }
         public int Estado { get; set;}
 
+        //Relaciones
         public virtual Reclamo? Reclamo { get; set; }
+
+        public int CarritoId { get; set; }
+        public virtual Carrito? Carrito { get; set; }
 
     }
 }

@@ -9,6 +9,7 @@ namespace _20241CYA12A_G2.Models
         public string Telefono { get; set; }
         public string DetalleReclamo { get; set; }
 
+        //Relaciones
         public int PedidoId { get; set; }
         public Pedido? Pedido { get; set; }
 

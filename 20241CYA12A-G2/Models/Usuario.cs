@@ -1,7 +1,7 @@
 namespace _20241CYA12A_G2.Models
 {
 
-    public class Usuario
+    public abstract class Usuario
     {
         public int Id { get; set; }
         public string Nombre { get; set; }

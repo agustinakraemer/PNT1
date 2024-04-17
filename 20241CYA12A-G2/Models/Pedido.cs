@@ -15,7 +15,7 @@ namespace _20241CYA12A_G2.Models
         public virtual Reclamo? Reclamo { get; set; }
 
         public int CarritoId { get; set; }
-        public virtual Carrito? Carrito { get; set; }
+        public Carrito? Carrito { get; set; }
 
     }
 }

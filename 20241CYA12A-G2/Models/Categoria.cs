@@ -9,7 +9,6 @@ namespace _20241CYA12A_G2.Models
 
         //Relaciones
         public ICollection<Producto>? Productos { get; set; }
-        public Producto? Producto { get; set; }
 
 
     }

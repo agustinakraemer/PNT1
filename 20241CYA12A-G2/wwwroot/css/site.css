@@ -1,5 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght400 &display=swap');
+
+
 html {
-  font-size: 14px;
+ font-family: 'Nunito' sans-serif;
+ font-size: 14px;
 }
 
 @media (min-width: 768px) {
@@ -15,4 +19,58 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+.nav-custom-rep {
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    text-decoration: none;
+    padding: 0px 15px 0px 0px;
+}
+
+.footer-custom {
+    padding-top: 15px;
+    background-color: #000000;
+    opacity: 0.8; 
+}
+.footer-nav-link-custom {
+
+    font-family: 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.footer-copyright-custom {
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    color: #F7F0E5;
+    padding: 15px 0px 10px 0px;
+}
+
+.hero-custom {
+
+    background-image: url("/images/bg_hero.png");
+    background-size: cover; 
+    background-position: center;
+    height: 380px;
+    padding: 6% 5% 0 37%   
+
+}
+
+    .hero-custom p {
+        font-weight: 400;
+        font-size: 55px;
+        font-family: 'Nunito', sans-serif;
+        color: #FFFFFF;
+    }
+
+        .hero-custom p span {
+             font-weight: 700;
+             color: #F26569;
 }

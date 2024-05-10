@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -45,6 +46,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
         // GET: Productos/Create
+        [Authorize(Roles = "EMPLEADO")]
         public IActionResult Create()
         {
             ViewData["CategoriaId"] = new SelectList(_context.Categoria, "Id", "Nombre");
@@ -69,6 +71,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
         // GET: Productos/Edit/5
+        [Authorize(Roles = "EMPLEADO")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Producto == null)

@@ -125,6 +125,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
         // GET: Productos/Delete/5
+        [Authorize(Roles = "EMPLEADO")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Producto == null)

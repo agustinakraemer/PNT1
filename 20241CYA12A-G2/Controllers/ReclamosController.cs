@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -26,6 +27,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
         // GET: Reclamos/Details/5
+        [Authorize(Roles = "EMPLEADO")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Reclamo == null)

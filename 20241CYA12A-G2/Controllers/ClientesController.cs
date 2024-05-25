@@ -117,43 +117,6 @@ namespace _20241CYA12A_G2.Controllers
             return View(cliente);
         }
 
-        // GET: Clientes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Cliente == null)
-            {
-                return NotFound();
-            }
-
-            var cliente = await _context.Cliente
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-
-            return View(cliente);
-        }
-
-        // POST: Clientes/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Cliente == null)
-            {
-                return Problem("Entity set 'DbContext.Cliente'  is null.");
-            }
-            var cliente = await _context.Cliente.FindAsync(id);
-            if (cliente != null)
-            {
-                _context.Cliente.Remove(cliente);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
         private bool ClienteExists(int id)
         {
           return (_context.Cliente?.Any(e => e.Id == id)).GetValueOrDefault();

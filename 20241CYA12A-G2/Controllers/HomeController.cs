@@ -17,11 +17,11 @@ namespace _20241CYA12A_G2.Controllers
         {
             return View();
         }
-
-        public IActionResult Privacy()
+        // Borramos Privacy de la vistaHome
+        /*public IActionResult Privacy()
         {
             return View();
-        }
+        }*/
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

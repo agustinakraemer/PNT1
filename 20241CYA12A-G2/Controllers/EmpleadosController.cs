@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -18,16 +19,19 @@ namespace _20241CYA12A_G2.Controllers
             _context = context;
         }
 
-        // GET: Empleados
-        public async Task<IActionResult> Index()
+		// GET: Empleados
+		[Authorize(Roles = "EMPLEADO,ADMINISTRADOR")]
+		public async Task<IActionResult> Index()
         {
               return _context.Empleado != null ? 
                           View(await _context.Empleado.ToListAsync()) :
                           Problem("Entity set 'DbContext.Empleado'  is null.");
         }
 
-        // GET: Empleados/Details/5
-        public async Task<IActionResult> Details(int? id)
+		// GET: Empleados/Details/5
+
+		[Authorize(Roles = "EMPLEADO, ADMINISTRADOR")]
+		public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Empleado == null)
             {

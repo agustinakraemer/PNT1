@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -18,16 +19,18 @@ namespace _20241CYA12A_G2.Controllers
             _context = context;
         }
 
-        // GET: Clientes
-        public async Task<IActionResult> Index()
+		// GET: Clientes
+		[Authorize(Roles = "EMPLEADO,ADMINISTRADOR")]
+		public async Task<IActionResult> Index()
         {
               return _context.Cliente != null ? 
                           View(await _context.Cliente.ToListAsync()) :
                           Problem("Entity set 'DbContext.Cliente'  is null.");
         }
 
-        // GET: Clientes/Details/5
-        public async Task<IActionResult> Details(int? id)
+		// GET: Clientes/Details/5
+		[Authorize(Roles = "CLIENTE,EMPLEADO,ADMINISTRADOR")]
+		public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Cliente == null)
             {
@@ -66,8 +69,9 @@ namespace _20241CYA12A_G2.Controllers
             return View(cliente);
         }
 
-        // GET: Clientes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+		// GET: Clientes/Edit/5
+		[Authorize(Roles = "CLIENTE")]
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Cliente == null)
             {

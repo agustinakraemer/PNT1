@@ -4,6 +4,7 @@ namespace _20241CYA12A_G2.Models
     public abstract class Usuario
     {
         public int Id { get; set; }
+        
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public string Direccion { get; set; }

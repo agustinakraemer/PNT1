@@ -1,9 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght400 &display=swap');
 
+.btn-link-custom {
+text-decoration:none;
+}
 
 html {
- font-family: 'Nunito' sans-serif;
- font-size: 14px;
+    font-family: 'Nunito' sans-serif;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {

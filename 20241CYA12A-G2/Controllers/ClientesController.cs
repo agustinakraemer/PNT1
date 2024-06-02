@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using SQLitePCL;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -66,8 +67,12 @@ namespace _20241CYA12A_G2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NumeroCliente,Id,Nombre,Apellido,Direccion,Telefono,FechaNacimiento,FechaAlta,Activo,Email")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("Nombre,Apellido,Direccion,Telefono,FechaNacimiento,Email")] Cliente cliente) // lo que recibimos del formulario
         {
+            cliente.NumeroCliente = await GenerarNumeroCliente();
+            cliente.FechaAlta = DateTime.Now;
+            cliente.Activo = true;
+
             if (ModelState.IsValid)
             {
                 _context.Add(cliente);
@@ -98,8 +103,8 @@ namespace _20241CYA12A_G2.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NumeroCliente,Id,Nombre,Apellido,Direccion,Telefono,FechaNacimiento,FechaAlta,Activo,Email")] Cliente cliente)
+        [ValidateAntiForgeryToken] 
+        public async Task<IActionResult> Edit(int id, [Bind("NumeroCliente,Id,Nombre,Apellido,Direccion,Telefono,FechaNacimiento,FechaAlta,Activo,Email")] Cliente cliente) 
         {
             if (id != cliente.Id)
             {
@@ -129,9 +134,25 @@ namespace _20241CYA12A_G2.Controllers
             return View(cliente);
         }
 
+        //Metodos privados
         private bool ClienteExists(int id)
         {
           return (_context.Cliente?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        
+        private async Task<int> GenerarNumeroCliente()
+        {
+            var cliente = await _context.Cliente.OrderByDescending(c =>
+            c.NumeroCliente).FirstOrDefaultAsync();
+
+            if(cliente == null)
+            {
+                return 4200000;
+            }
+
+            return cliente.NumeroCliente + 1;
     }
+    }
+
+    
 }

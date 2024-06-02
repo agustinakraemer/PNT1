@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -48,9 +49,16 @@ namespace _20241CYA12A_G2.Controllers
         }
 
         // GET: Clientes/Create
-        public IActionResult Create()
+        public IActionResult Create(IdentityUser? user)
         {
-            return View();
+            if (user == null) return NotFound();
+
+            Cliente cliente = new()
+            {
+                Email = user.Email
+            };
+
+            return View(cliente);
         }
 
         // POST: Clientes/Create

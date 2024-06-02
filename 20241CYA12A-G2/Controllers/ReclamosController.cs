@@ -19,8 +19,9 @@ namespace _20241CYA12A_G2.Controllers
             _context = context;
         }
 
-        // GET: Reclamos
-        public async Task<IActionResult> Index()
+		// GET: Reclamos
+		[Authorize(Roles = "EMPLEADO")]
+		public async Task<IActionResult> Index()
         {
             var dbContext = _context.Reclamo.Include(r => r.Pedido);
             return View(await dbContext.ToListAsync());
@@ -46,8 +47,9 @@ namespace _20241CYA12A_G2.Controllers
             return View(reclamo);
         }
 
-        // GET: Reclamos/Create
-        public IActionResult Create()
+		// GET: Reclamos/Create
+		[Authorize(Roles = "CLIENTE")]
+		public IActionResult Create()
         {
             ViewData["PedidoId"] = new SelectList(_context.Pedido, "Id", "Id");
             return View();

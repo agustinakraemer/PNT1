@@ -7,23 +7,37 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace _20241CYA12A_G2.Controllers
 {
     public class ReservasController : Controller
     {
         private readonly DbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ReservasController(DbContext context)
+        public ReservasController(DbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
+        [Authorize(Roles = "CLIENTE, EMPLEADO")]
         // GET: Reservas
         public async Task<IActionResult> Index()
         {
-            var dbContext = _context.Reserva.Include(r => r.Cliente);
-            return View(await dbContext.ToListAsync());
+            var reservas = await _context.Reserva.Include(r => r.Cliente).ToListAsync();
+
+            if (User.IsInRole("EMPLEADO"))
+            {
+                return View(reservas);
+            }
+
+            var usuario = await _userManager.GetUserAsync(User);
+
+            var reservasUsuario = reservas.Where(r => r.Cliente.Email.ToUpper() == usuario.Email.ToUpper()).ToList();
+
+            return View(reservasUsuario);
         }
 
         // GET: Reservas/Details/5

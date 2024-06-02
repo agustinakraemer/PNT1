@@ -28,7 +28,7 @@ namespace _20241CYA12A_G2.Controllers
         {
             var reservas = await _context.Reserva.Include(r => r.Cliente).ToListAsync();
 
-            if (User.IsInRole("EMPLEADO"))
+            if (User.IsInRole("CLIENTE"))
             {
                 return View(reservas);
             }

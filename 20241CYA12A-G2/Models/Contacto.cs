@@ -6,7 +6,7 @@ namespace _20241CYA12A_G2.Models
     public class Contacto
     {
         public int Id { get; set; }
-        [Display(Name = "Nombre compelto")]
+        [Display(Name = "Nombre completo")]
         [Required(ErrorMessage = "El nombre completo es obligatorio")]
         [MaxLength(255, ErrorMessage = "El nombre no debe tener más de 255 caracteres")]
         public string NombreCompleto { get; set; }

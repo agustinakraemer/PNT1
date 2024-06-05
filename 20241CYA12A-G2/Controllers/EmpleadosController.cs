@@ -20,7 +20,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
 		// GET: Empleados
-		[Authorize(Roles = "ADMINISTRADOR")]
+		[Authorize(Roles = "ADMIN")]
 		public async Task<IActionResult> Index()
         {
               return _context.Empleado != null ? 
@@ -29,7 +29,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
 		// GET: Empleados/Details/5
-		[Authorize(Roles = "ADMINISTRADOR")]
+		[Authorize(Roles = "ADMIN")]
 		public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Empleado == null)
@@ -48,7 +48,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
 		// GET: Empleados/Create
-		[Authorize(Roles = "ADMINISTRADOR")]
+		[Authorize(Roles = "ADMIN")]
 		public IActionResult Create()
         {
             return View();

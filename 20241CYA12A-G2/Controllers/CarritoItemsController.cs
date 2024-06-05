@@ -6,20 +6,52 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace _20241CYA12A_G2.Controllers
+
 {
     public class CarritoItemsController : Controller
     {
         private readonly DbContext _context;
+		private readonly UserManager<IdentityUser> _userManager;
 
-        public CarritoItemsController(DbContext context)
+		public CarritoItemsController(DbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
+		public async Task<IActionResult> CreateOrEditItem(int productoId)
+		{
+			var user = await _userManager.GetUserIdAsync(User);
+			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper == user.Email.NormalizedEmail);
+            var pedidoPendiente = await _context.Pedido
+                .Include(p =>p.Carrito)
+                .FirstOrDefaultAsync(p=>p.Carrito.ClienteId == cliente.Id && p.Estado == 1);
+            if (pedidoPendiente != null)
+            {
+                return NotFound();   
+            }
 
-        // GET: CarritoItems
-        public async Task<IActionResult> Index()
+            var pedidosDelDia = await _context.Pedido
+                .Include(p=>p.Carrito)
+                .Where(p=>p.Carrito.ClienteId == cliente.Id && pedidoPendiente.FechaCompra.Date == DateTime.Now.Date)
+                .ToListAsync();
+
+            if (pedidosDelDia.Countt > 3)
+            {
+                return NotFound();
+            }
+
+            var producto = await _context.Producto.FindAsync(productoId);
+            
+            if (producto.Stock < 1)
+
+            return Ok();
+		}
+
+		// GET: CarritoItems
+		public async Task<IActionResult> Index()
         {
             var dbContext = _context.CarritoItem.Include(c => c.Carrito).Include(c => c.Producto);
             return View(await dbContext.ToListAsync());

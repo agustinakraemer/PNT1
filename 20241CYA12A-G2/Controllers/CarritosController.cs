@@ -6,18 +6,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace _20241CYA12A_G2.Controllers
 {
     public class CarritosController : Controller
     {
         private readonly DbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CarritosController(DbContext context)
+        public CarritosController(DbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
+        public async Task<AcceptedAtActionResult> CreateOrEditItem(int productoId)
+        {
+			var user = await _userManager.GetUserIdAsync(User);
+			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper == user.Email.NormalizedEmail);
+		}
         // GET: Carritos
         public async Task<IActionResult> Index()
         {

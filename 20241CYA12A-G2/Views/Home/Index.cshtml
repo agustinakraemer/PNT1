@@ -1,10 +1,21 @@
-﻿@{
+﻿@model _20241CYA12A_G2.Models.HomeViewModel
+
+@{
     ViewData["Title"] = "Inicio";
 }
+	<div class ="hero-custom"> 
+    
+	@if (Model.MensajePromo == "")
+	{
+		<p>Hoy <span>@Model.Dia</span> ahorrá un <span>@Model.Descuento</span> en <span>@Model.Producto</span>!</p>
+	}
+	else
+	{
+		<p>@Model.MensajePromo</p>
+	}
 
-<div class ="hero-custom"> 
-    <p>¡Hoy <span>jueves </span>  ahorrá un <span>30%</span> en <span>Combo Alaska XL</span>! </p>
-</div>
+
+		</div>
 <div class="container text-center p-3">
 		<h2 class="ha-custom"> Los favoritos<span><img src="/images/emoticon_smile.png" alt="Carita sonriente" height="50" /></span></h2>
 		

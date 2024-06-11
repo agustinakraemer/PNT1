@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -27,10 +28,22 @@ namespace _20241CYA12A_G2.Controllers
 			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper == user.Email.NormalizedEmail);
 		}
         // GET: Carritos
+        [Authorize(Roles = "CLIENTE")]
         public async Task<IActionResult> Index()
         {
-            var dbContext = _context.Carrito.Include(c => c.Cliente);
-            return View(await dbContext.ToListAsync());
+            var user = await _userManager.GetUserIdAsync(User);
+            var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper == user.Email.NormalizedEmail);
+           
+            var carrito = await _context.Carrito
+                                        .Include(c => c.CarritoItems)
+                                        .ThenInclude(ci=> ci.Producto)
+                                        .FirstOrDefaultAsync(
+                                                 c => c.ClienteId == cliente.Id
+                                                 && c.Procesado == false
+                                                 && c.Cancelado == false
+                                                 );
+
+            return View(carrito);
         }
 
         // GET: Carritos/Details/5

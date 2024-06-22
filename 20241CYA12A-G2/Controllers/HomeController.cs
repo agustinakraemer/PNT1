@@ -32,16 +32,16 @@ namespace _20241CYA12A_G2.Controllers
 			if (descuento == null)
 			{
 
-                homeViewModel.MensajePromo = "Hoy es " + dia + ". Disfruta del mejor sushi con #EnCasa con amigos.";
+                homeViewModel.MensajePromo = "Hoy es " + dia + ". Disfruta del mejor sushi #EnCasa con amigos.";
 			}
 			else
 			{
 				homeViewModel.Dia = dia;
 				homeViewModel.Descuento = descuento.Porcentaje.ToString() + "%";
 				homeViewModel.Producto = descuento.Producto.Nombre;
-			} 
-
-            return View(homeViewModel);
+			}
+ 
+			return View(homeViewModel);
 
 			 
         }

@@ -25,14 +25,14 @@ namespace _20241CYA12A_G2.Controllers
         public async Task<AcceptedAtActionResult> CreateOrEditItem(int productoId)
         {
 			var user = await _userManager.GetUserIdAsync(User);
-			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper == user.Email.NormalizedEmail);
+			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
 		}
         // GET: Carritos
         [Authorize(Roles = "CLIENTE")]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserIdAsync(User);
-            var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper == user.Email.NormalizedEmail);
+            var user = await _userManager.GetUserAsync(User);
+            var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
            
             var carrito = await _context.Carrito
                                         .Include(c => c.CarritoItems)

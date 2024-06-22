@@ -33,8 +33,8 @@ namespace _20241CYA12A_G2.Controllers
                 return NotFound();
             }
 
-            var user = await _userManager.GetUserIdAsync(User);
-			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper == user.Email.NormalizedEmail);
+            var user = await _userManager.GetUserAsync(User);
+			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
 
             var pedidoPendiente = await _context.Pedido
                 .Include(p =>p.Carrito)
@@ -49,7 +49,7 @@ namespace _20241CYA12A_G2.Controllers
                 .Where(p=>p.Carrito.ClienteId == cliente.Id && pedidoPendiente.FechaCompra.Date == DateTime.Now.Date)
                 .ToListAsync();
 
-            if (pedidosDelDia.Countt > 3)
+            if (pedidosDelDia.Count > 3)
             {
                 return NotFound();
             }
@@ -70,7 +70,7 @@ namespace _20241CYA12A_G2.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            var item = carrito.CarritosItems.FirstOrDefault(ci=>ci.ProductoId == productoId);
+            var item = carrito.CarritoItems.FirstOrDefault(ci=>ci.ProductoId == productoId);
 
             //buscar descuento
             decimal precioProducto = producto.Precio;

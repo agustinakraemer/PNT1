@@ -31,7 +31,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
 		// GET: Clientes/Details/5
-		[Authorize(Roles = "CLIENTE,EMPLEADO,ADMINISTRADOR")]
+		[Authorize(Roles = "EMPLEADO,ADMINISTRADOR")] //min 1:25:51 Clase9: detail para Admin y empleado.
 		public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Cliente == null)
@@ -150,7 +150,7 @@ namespace _20241CYA12A_G2.Controllers
                 return 4200000;
             }
 
-            return cliente.NumeroCliente + 1;
+            return (int)cliente.NumeroCliente + 1; // casteamos para evitar que rompa; si el cliente pasado es null
     }
     }
 

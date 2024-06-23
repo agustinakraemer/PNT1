@@ -29,6 +29,10 @@ namespace _20241CYA12A_G2.Controllers
 
             HomeViewModel homeViewModel = new();
 
+            homeViewModel.Telefono = "+541140044004";
+			homeViewModel.Dia = dia;
+			homeViewModel.HorarioAtencion = "11 a 14 horas y de 19 a 23 horas";
+
 			if (descuento == null)
 			{
 
@@ -36,7 +40,7 @@ namespace _20241CYA12A_G2.Controllers
 			}
 			else
 			{
-				homeViewModel.Dia = dia;
+				//homeViewModel.Dia = dia;
 				homeViewModel.Descuento = descuento.Porcentaje.ToString() + "%";
 				homeViewModel.Producto = descuento.Producto.Nombre;
 			}

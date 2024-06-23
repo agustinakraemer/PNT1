@@ -80,14 +80,15 @@ body {
 
 .call-to-action {
     background-image: url("/images/delivery_guy.png");
-    background-size: cover; 
-    background-position: center;
+    background-size: initial; 
+    background-position:right;
     height: 380px;
-    padding: 6% 5% 0 37% 
+    padding: 6% 5% 0% 37% 
  }
     .call-to-action p {
+        background-position: left;
         font-weight: 400;
-        font-size: 55px;
+        font-size: 45px;
         font-family: 'Nunito', sans-serif;
         color: #FFFEFE;
     }

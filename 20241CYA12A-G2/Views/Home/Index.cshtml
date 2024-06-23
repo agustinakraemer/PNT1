@@ -59,7 +59,11 @@
 </div>
 
 <div class="call-to-action ">
-		<p>¡Hoy atendemos de 11 a 14 horas y de 19 a 23 horas por WhatsApp<span>+541140044004</span></p>
+	@if (Model.Telefono != "")
+	{
+		<p>¡Hoy <span>@Model.Dia</span> atendemos de @Model.HorarioAtencion por WhatsApp <span>@Model.Telefono</span></p>
+	}
+	
 </div>
 
 <div class="container text-center p-3">

@@ -6,20 +6,103 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _20241CYA12A_G2.Controllers
+
 {
     public class CarritoItemsController : Controller
     {
         private readonly DbContext _context;
+		private readonly UserManager<IdentityUser> _userManager;
 
-        public CarritoItemsController(DbContext context)
+		public CarritoItemsController(DbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // GET: CarritoItems
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "CLIENTE")]
+		public async Task<IActionResult> CreateOrEditItem(int productoId)
+		{
+
+            var producto = await _context.Producto.FindAsync(productoId);
+            if (producto.Stock < 1)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
+
+            var pedidoPendiente = await _context.Pedido
+                .Include(p =>p.Carrito)
+                .FirstOrDefaultAsync(p=>p.Carrito.ClienteId == cliente.Id && p.Estado == 1);
+            if (pedidoPendiente != null)
+            {
+                return NotFound();   
+            }
+
+            var pedidosDelDia = await _context.Pedido
+                .Include(p=>p.Carrito)
+                .Where(p=>p.Carrito.ClienteId == cliente.Id && pedidoPendiente.FechaCompra.Date == DateTime.Now.Date)
+                .ToListAsync();
+
+            if (pedidosDelDia.Count > 3)
+            {
+                return NotFound();
+            }
+
+            var carrito = await _context.Carrito.Include(c => c.CarritoItems).FirstOrDefaultAsync(c => c.ClienteId == cliente.Id && c.Procesado == false && c.Cancelado == false);
+            
+            if(carrito == null)
+            {
+                carrito = new Carrito
+                {
+                    ClienteId = cliente.Id,
+                    Procesado = false,
+                    Cancelado = false,
+                    CarritoItems = new List<CarritoItem>()
+                };
+
+                _context.Add(carrito);
+                await _context.SaveChangesAsync();
+            }
+
+            var item = carrito.CarritoItems.FirstOrDefault(ci=>ci.ProductoId == productoId);
+
+            //buscar descuento
+            decimal precioProducto = producto.Precio;
+
+            if(item == null)
+            {
+                item = new CarritoItem
+                {
+                    CarritoId = carrito.Id,
+                    ProductoId = producto.Id,
+                    PrecioUnitarioConDescuento = precioProducto,
+                    Cantidad = 1,
+                };
+                _context.Add(item);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                item.Cantidad++;
+                _context.Update(item);
+                await _context.SaveChangesAsync();
+            }
+
+            producto.Stock--;
+            _context.Update(producto);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Carritos");
+		}
+
+		// GET: CarritoItems
+		public async Task<IActionResult> Index()
         {
             var dbContext = _context.CarritoItem.Include(c => c.Carrito).Include(c => c.Producto);
             return View(await dbContext.ToListAsync());

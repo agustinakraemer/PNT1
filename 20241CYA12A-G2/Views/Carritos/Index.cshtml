@@ -1,4 +1,4 @@
-﻿@model IEnumerable<_20241CYA12A_G2.Models.Carrito>
+﻿@model _20241CYA12A_G2.Models.Carrito
 
 @{
     ViewData["Title"] = "Index";
@@ -13,28 +13,28 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Procesado)
+                Producto
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Cancelado)
+                Cantidad
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Cliente)
+                Precio
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.CarritoItems) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Procesado)
+                @Html.DisplayFor(modelItem => item.Producto.Nombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Cancelado)
+                @Html.DisplayFor(modelItem => item.Cantidad)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Cliente.Id)
+                @Html.DisplayFor(modelItem => item.PrecioUnitarioConDescuento)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

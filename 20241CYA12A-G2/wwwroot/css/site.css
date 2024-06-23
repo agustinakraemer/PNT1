@@ -77,3 +77,21 @@ body {
              font-weight: 700;
              color: #F26569;
 }
+
+.call-to-action {
+    background-image: url("/images/delivery_guy.png");
+    background-size: cover; 
+    background-position: center;
+    height: 380px;
+    padding: 6% 5% 0 37% 
+ }
+    .call-to-action p {
+        font-weight: 400;
+        font-size: 55px;
+        font-family: 'Nunito', sans-serif;
+        color: #FFFEFE;
+    }
+        .call-to-action p span {
+            font-weight: 700;
+            color: #FFDE59;
+        }

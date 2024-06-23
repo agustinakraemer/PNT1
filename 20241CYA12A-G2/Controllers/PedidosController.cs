@@ -6,23 +6,34 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace _20241CYA12A_G2.Controllers
 {
     public class PedidosController : Controller
     {
         private readonly DbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public PedidosController(DbContext context)
+        public PedidosController(DbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Pedidos
         public async Task<IActionResult> Index()
         {
-            var dbContext = _context.Pedido.Include(p => p.Carrito);
-            return View(await dbContext.ToListAsync());
+            var pedidos = await _context.Pedido 
+                .Include(p=>p.Carrito)
+                .Include(p=>p.Carrito.Cliente)
+                .ToListAsync();
+
+            var usuario = await _userManager.GetUserAsync(User);
+
+            var pedidosCliente = pedidos.Where(p=>p.Carrito.Cliente.Email==usuario.Email).ToList();
+
+            return View(pedidosCliente);
         }
 
         // GET: Pedidos/Details/5

@@ -51,7 +51,7 @@ namespace _20241CYA12A_G2.Controllers
 		[Authorize(Roles = "CLIENTE")]
 		public IActionResult Create()
         {
-            ViewData["PedidoId"] = new SelectList(_context.Pedido, "Id", "Id");
+            ViewData["PedidoId"] = new SelectList(_context.Pedido, "Id", "NroPedido");
             return View();
         }
 
@@ -68,7 +68,7 @@ namespace _20241CYA12A_G2.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PedidoId"] = new SelectList(_context.Pedido, "Id", "Id", reclamo.PedidoId);
+            ViewData["PedidoId"] = new SelectList(_context.Pedido, "Id", "NroPedido", reclamo.PedidoId);
             return View(reclamo);
         }
 

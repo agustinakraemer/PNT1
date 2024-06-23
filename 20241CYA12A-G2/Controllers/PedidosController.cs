@@ -95,8 +95,6 @@ namespace _20241CYA12A_G2.Controllers
 				return NotFound();
 			}
 
-            // guardar pedido
-
             //generar numero de pedido
             var nroPedido = await GenerarNumeroPedido();
 
@@ -104,6 +102,8 @@ namespace _20241CYA12A_G2.Controllers
             carritoCliente.Estado = 2;
             carritoCliente.NroPedido = nroPedido;
 			_context.Update(carritoCliente);
+
+			// guardar pedido
 			await _context.SaveChangesAsync();
 
 			//mostar detalle y numero pedido
@@ -111,7 +111,7 @@ namespace _20241CYA12A_G2.Controllers
 
 		}
 
-        public async Task<IActionResult> GenerarNumeroPedido()
+        public async Task<int> GenerarNumeroPedido()
         {
 			var ultimoPedido = await _context.Pedido.FirstOrDefaultAsync();
 
@@ -126,7 +126,7 @@ namespace _20241CYA12A_G2.Controllers
                 nroPedido = ultimoPedido.NroPedido + 5;
             }
 
-            return (IActionResult)Task.FromResult(nroPedido);
+            return nroPedido;
 
 		}
 

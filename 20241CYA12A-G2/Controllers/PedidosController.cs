@@ -21,8 +21,117 @@ namespace _20241CYA12A_G2.Controllers
             _userManager = userManager;
         }
 
-        // GET: Pedidos
-        public async Task<IActionResult> Index()
+		public async Task<IActionResult> CreateItem()
+		{
+
+			var user = await _userManager.GetUserAsync(User);
+			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
+
+			// Buscar carrito Cliente
+			// consultar carrito cliente
+
+			var carritoCliente = await _context.Pedido
+	            .Include(p => p.Carrito)
+	            .FirstOrDefaultAsync(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 1);
+
+			if (carritoCliente != null)
+			{
+				return NotFound();
+			}
+
+
+			//Obtener pedidos confirmados de los ultimos 30 dias
+			// Consultar pedidos de los ultimos 30 dias
+
+			var pedidosUltimos30 = await _context.Pedido
+				.Include(p => p.Carrito)
+				.Where(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 2  && carritoCliente.FechaCompra.Date <= (DateTime.Now.Date).AddDays(-30))
+				.ToListAsync();
+
+
+            double gastoEnvio = 80;
+
+			// obtenemos costo de envio:
+			// validar cantidad
+			if (pedidosUltimos30.Count > 10)
+			{
+                gastoEnvio = 0;
+			}
+
+			//TODO: consultar api del clima
+
+			var temp = 1;
+            var llueve = false;
+            var temperaturaMinima = 5;
+            if ( llueve || temp < temperaturaMinima)
+            {
+                gastoEnvio *= 1.5;
+            }
+
+            // generar detalle pedido
+            carritoCliente.GastoEnvio = (decimal)gastoEnvio;
+			_context.Update(carritoCliente);
+			await _context.SaveChangesAsync();
+
+			// redirigir a la vista del detalle del carrito
+			return RedirectToAction("Index", "CarritoItems/Details/" + carritoCliente.CarritoId);
+
+		}
+
+		public async Task<IActionResult> GenerarPedido()
+		{
+
+			var user = await _userManager.GetUserAsync(User);
+			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
+
+			// Buscar pedido Cliente
+
+			var carritoCliente = await _context.Pedido
+				.Include(p => p.Carrito)
+				.FirstOrDefaultAsync(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 1);
+
+			if (carritoCliente != null)
+			{
+				return NotFound();
+			}
+
+            // guardar pedido
+
+            //generar numero de pedido
+            var nroPedido = await GenerarNumeroPedido();
+
+            // generar detalle pedido
+            carritoCliente.Estado = 2;
+            carritoCliente.NroPedido = nroPedido;
+			_context.Update(carritoCliente);
+			await _context.SaveChangesAsync();
+
+			//mostar detalle y numero pedido
+			return RedirectToAction("Index", "Pedidos/Details/" + nroPedido);
+
+		}
+
+        public async Task<IActionResult> GenerarNumeroPedido()
+        {
+			var ultimoPedido = await _context.Pedido.FirstOrDefaultAsync();
+
+			var nroPedido = 0;
+
+			if (ultimoPedido == null)
+            {
+                nroPedido = 30000;
+            }
+            else
+            {
+                nroPedido = ultimoPedido.NroPedido + 5;
+            }
+
+            return (IActionResult)Task.FromResult(nroPedido);
+
+		}
+
+		// GET: Pedidos
+		public async Task<IActionResult> Index()
         {
             var pedidos = await _context.Pedido 
                 .Include(p=>p.Carrito)
@@ -54,6 +163,7 @@ namespace _20241CYA12A_G2.Controllers
 
             return View(pedido);
         }
+
 
         // GET: Pedidos/Create
         public IActionResult Create()

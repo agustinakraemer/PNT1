@@ -80,7 +80,7 @@ body {
 
 .call-to-action {
     background-image: url("/images/delivery_guy.png");
-    background-size: initial; 
+    background-size: cover; 
     background-position:right;
     height: 380px;
     padding: 6% 5% 0% 37% 

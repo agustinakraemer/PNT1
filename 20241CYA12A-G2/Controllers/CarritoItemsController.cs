@@ -72,7 +72,7 @@ namespace _20241CYA12A_G2.Controllers
 
             var item = carrito.CarritoItems.FirstOrDefault(ci=>ci.ProductoId == productoId);
 
-            //buscar descuento
+          
             decimal precioProducto = producto.Precio;
 
             if(item == null)
@@ -87,9 +87,18 @@ namespace _20241CYA12A_G2.Controllers
                 _context.Add(item);
                 await _context.SaveChangesAsync();
             }
-            else
+            else             //buscar descuento
             {
-                item.Cantidad++;
+                var descuento = item.Producto.Descuentos.FirstOrDefault(c => c.Producto.Id == productoId);
+                if(descuento != null) 
+                {
+                    decimal porentajeDescuento = (item.PrecioUnitarioConDescuento * (descuento.Porcentaje / 100));
+                    item.PrecioUnitarioConDescuento -= porentajeDescuento;
+
+
+
+                }
+                    item.Cantidad++;
                 _context.Update(item);
                 await _context.SaveChangesAsync();
             }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _20241CYA12A_G2.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -143,6 +144,28 @@ namespace _20241CYA12A_G2.Controllers
             var pedidosCliente = pedidos.Where(p=>p.Carrito.Cliente.Email==usuario.Email).ToList();
 
             return View(pedidosCliente);
+        }
+         
+        [Authorize(Roles = "CLIENTE")]
+        public async Task<IActionResult> HacerPedido(int idCarrito)
+        {
+            var carrito = await _context.Carrito
+                                .Include(c => c.Cliente)
+                                .Include(c => c.CarritoItems)
+                                    .ThenInclude(ci => ci.Producto)
+                                .FirstOrDefaultAsync(c => c.Id == idCarrito);
+
+            DetallePedidoViewModel vm = new DetallePedidoViewModel
+            {
+                Cliente = carrito.Cliente.Nombre + " " + carrito.Cliente.Apellido,
+                Productos = carrito.CarritoItems.Select(ci => ci.Producto.Nombre).ToList(),
+                Subtotal = carrito.CarritoItems.Sum(ci => ci.PrecioUnitarioConDescuento * ci.Cantidad),
+                GastoEnvio = 100
+            };
+
+            vm.Total = vm.Subtotal + vm.GastoEnvio;
+
+            return View(vm);
         }
 
         // GET: Pedidos/Details/5

@@ -37,7 +37,7 @@
                 @Html.DisplayFor(modelItem => item.PrecioUnitarioConDescuento)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Edit" asp-route-id="@item">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
@@ -45,3 +45,7 @@
 }
     </tbody>
 </table>
+
+<a asp-controller="Carritos" asp-action="CancelarCarrito" asp-route-idCarrito="@Model.Id">Cancelar</a>
+<br/ >
+<a asp-controller="Pedidos" asp-action="HacerPedido" asp-route-idCarrito="@Model.Id">Hacer pedido</a>

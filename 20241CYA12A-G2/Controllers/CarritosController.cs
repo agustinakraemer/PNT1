@@ -41,6 +41,19 @@ namespace _20241CYA12A_G2.Controllers
             return View(carrito);
         }
 
+        [Authorize(Roles = "CLIENTE")]
+        public async Task<IActionResult> CancelarCarrito(int idCarrito)
+        {
+            var carritoBuscado = await _context.Carrito.FindAsync(idCarrito);
+
+            carritoBuscado.Cancelado = true;
+            _context.Update(carritoBuscado);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: Carritos/Details/5
         public async Task<IActionResult> Details(int? id)
         {

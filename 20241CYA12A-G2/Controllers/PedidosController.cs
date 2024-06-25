@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using _20241CYA12A_G2.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using _20241CYA12A_G2.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
 
 namespace _20241CYA12A_G2.Controllers
 {
@@ -22,79 +18,79 @@ namespace _20241CYA12A_G2.Controllers
             _userManager = userManager;
         }
 
-		public async Task<IActionResult> CreateItem()
-		{
+        public async Task<IActionResult> CreateItem()
+        {
 
-			var user = await _userManager.GetUserAsync(User);
-			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
+            var user = await _userManager.GetUserAsync(User);
+            var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
 
-			// Buscar carrito Cliente
-			// consultar carrito cliente
+            // Buscar carrito Cliente
+            // consultar carrito cliente
 
-			var carritoCliente = await _context.Pedido
-	            .Include(p => p.Carrito)
-	            .FirstOrDefaultAsync(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 1);
+            var carritoCliente = await _context.Pedido
+                .Include(p => p.Carrito)
+                .FirstOrDefaultAsync(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 1);
 
-			if (carritoCliente != null)
-			{
-				return NotFound();
-			}
+            if (carritoCliente != null)
+            {
+                return NotFound();
+            }
 
 
-			//Obtener pedidos confirmados de los ultimos 30 dias
-			// Consultar pedidos de los ultimos 30 dias
+            //Obtener pedidos confirmados de los ultimos 30 dias
+            // Consultar pedidos de los ultimos 30 dias
 
-			var pedidosUltimos30 = await _context.Pedido
-				.Include(p => p.Carrito)
-				.Where(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 2  && carritoCliente.FechaCompra.Date <= (DateTime.Now.Date).AddDays(-30))
-				.ToListAsync();
+            var pedidosUltimos30 = await _context.Pedido
+                .Include(p => p.Carrito)
+                .Where(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 2 && carritoCliente.FechaCompra.Date <= (DateTime.Now.Date).AddDays(-30))
+                .ToListAsync();
 
 
             double gastoEnvio = 80;
 
-			// obtenemos costo de envio:
-			// validar cantidad
-			if (pedidosUltimos30.Count > 10)
-			{
+            // obtenemos costo de envio:
+            // validar cantidad
+            if (pedidosUltimos30.Count > 10)
+            {
                 gastoEnvio = 0;
-			}
+            }
 
-			//TODO: consultar api del clima
+            //TODO: consultar api del clima
 
-			var temp = 1;
+            var temp = 1;
             var llueve = false;
             var temperaturaMinima = 5;
-            if ( llueve || temp < temperaturaMinima)
+            if (llueve || temp < temperaturaMinima)
             {
                 gastoEnvio *= 1.5;
             }
 
             // generar detalle pedido
             carritoCliente.GastoEnvio = (decimal)gastoEnvio;
-			_context.Update(carritoCliente);
-			await _context.SaveChangesAsync();
+            _context.Update(carritoCliente);
+            await _context.SaveChangesAsync();
 
-			// redirigir a la vista del detalle del carrito
-			return RedirectToAction("Index", "CarritoItems/Details/" + carritoCliente.CarritoId);
+            // redirigir a la vista del detalle del carrito
+            return RedirectToAction("Index", "CarritoItems/Details/" + carritoCliente.CarritoId);
 
-		}
+        }
 
-		public async Task<IActionResult> GenerarPedido()
-		{
+        public async Task<IActionResult> GenerarPedido()
+        {
 
-			var user = await _userManager.GetUserAsync(User);
-			var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
+            var user = await _userManager.GetUserAsync(User);
+            var cliente = await _context.Cliente.FirstOrDefaultAsync(c => c.Email.ToUpper() == user.NormalizedEmail);
 
-			// Buscar pedido Cliente
+            // Buscar pedido Cliente
 
-			var carritoCliente = await _context.Pedido
-				.Include(p => p.Carrito)
-				.FirstOrDefaultAsync(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 1);
+            var carritoCliente = await _context.Pedido
+                .Include(p => p.Carrito)
+                .FirstOrDefaultAsync(p => p.Carrito.ClienteId == cliente.Id && p.Estado == 1);
 
-			if (carritoCliente != null)
-			{
-				return NotFound();
-			}
+            if (carritoCliente != null)
+            {
+                return NotFound();
+            }
 
             //generar numero de pedido
             var nroPedido = await GenerarNumeroPedido();
@@ -102,23 +98,23 @@ namespace _20241CYA12A_G2.Controllers
             // generar detalle pedido
             carritoCliente.Estado = 2;
             carritoCliente.NroPedido = nroPedido;
-			_context.Update(carritoCliente);
+            _context.Update(carritoCliente);
 
-			// guardar pedido
-			await _context.SaveChangesAsync();
+            // guardar pedido
+            await _context.SaveChangesAsync();
 
-			//mostar detalle y numero pedido
-			return RedirectToAction("Index", "Pedidos/Details/" + nroPedido);
+            //mostar detalle y numero pedido
+            return RedirectToAction("Index", "Pedidos/Details/" + nroPedido);
 
-		}
+        }
 
         public async Task<int> GenerarNumeroPedido()
         {
-			var ultimoPedido = await _context.Pedido.FirstOrDefaultAsync();
+            var ultimoPedido = await _context.Pedido.FirstOrDefaultAsync();
 
-			var nroPedido = 0;
+            var nroPedido = 0;
 
-			if (ultimoPedido == null)
+            if (ultimoPedido == null)
             {
                 nroPedido = 30000;
             }
@@ -129,31 +125,33 @@ namespace _20241CYA12A_G2.Controllers
 
             return nroPedido;
 
-		}
+        }
 
-		// GET: Pedidos
-		public async Task<IActionResult> Index()
+        // GET: Pedidos
+        public async Task<IActionResult> Index()
         {
-            var pedidos = await _context.Pedido 
-                .Include(p=>p.Carrito)
-                .Include(p=>p.Carrito.Cliente)
+            var pedidos = await _context.Pedido
+                .Include(p => p.Carrito)
+                .Include(p => p.Carrito.Cliente)
                 .ToListAsync();
 
             var usuario = await _userManager.GetUserAsync(User);
 
-            var pedidosCliente = pedidos.Where(p=>p.Carrito.Cliente.Email==usuario.Email).ToList();
+            var pedidosCliente = pedidos.Where(p => p.Carrito.Cliente.Email == usuario.Email).ToList();
 
             return View(pedidosCliente);
         }
-         
+
         [Authorize(Roles = "CLIENTE")]
-        public async Task<IActionResult> HacerPedido(int idCarrito)
+        public async Task<IActionResult> HacerPedido()
         {
+            var usuario = await _userManager.GetUserAsync(User);
+
             var carrito = await _context.Carrito
                                 .Include(c => c.Cliente)
                                 .Include(c => c.CarritoItems)
                                     .ThenInclude(ci => ci.Producto)
-                                .FirstOrDefaultAsync(c => c.Id == idCarrito);
+                                .FirstOrDefaultAsync(c => c.Cliente.Email.ToUpper() == usuario.NormalizedEmail && c.Procesado == false && c.Cancelado == false);
 
             DetallePedidoViewModel vm = new DetallePedidoViewModel
             {
@@ -298,14 +296,14 @@ namespace _20241CYA12A_G2.Controllers
             {
                 _context.Pedido.Remove(pedido);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PedidoExists(int id)
         {
-          return (_context.Pedido?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Pedido?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

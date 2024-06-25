@@ -1,36 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using _20241CYA12A_G2.Models;
+﻿using _20241CYA12A_G2.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace _20241CYA12A_G2.Controllers
 {
     public class EmpleadosController : Controller
     {
         private readonly DbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public EmpleadosController(DbContext context)
+        public EmpleadosController(DbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-		// GET: Empleados
-		[Authorize(Roles = "ADMIN")]
-		public async Task<IActionResult> Index()
+        // GET: Empleados
+        [Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> Index()
         {
-              return _context.Empleado != null ? 
-                          View(await _context.Empleado.ToListAsync()) :
-                          Problem("Entity set 'DbContext.Empleado'  is null.");
+            return _context.Empleado != null ?
+                        View(await _context.Empleado.ToListAsync()) :
+                        Problem("Entity set 'DbContext.Empleado'  is null.");
         }
 
-		// GET: Empleados/Details/5
-		[Authorize(Roles = "ADMIN")]
-		public async Task<IActionResult> Details(int? id)
+        // GET: Empleados/Details/5
+        [Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Empleado == null)
             {
@@ -47,9 +45,9 @@ namespace _20241CYA12A_G2.Controllers
             return View(empleado);
         }
 
-		// GET: Empleados/Create
-		[Authorize(Roles = "ADMIN")]
-		public IActionResult Create()
+        // GET: Empleados/Create
+        [Authorize(Roles = "ADMIN")]
+        public IActionResult Create()
         {
             return View();
         }
@@ -59,13 +57,28 @@ namespace _20241CYA12A_G2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Legajo,Id,Nombre,Apellido,Direccion,Telefono,FechaNacimiento,FechaAlta,Activo,Email")] Empleado empleado)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Apellido,Direccion,Telefono,FechaNacimiento,Email")] Empleado empleado)
         {
+            empleado.Legajo = await GenerarLegajo();
+            empleado.FechaAlta = DateTime.Now;
+            empleado.Activo = true;
+
             if (ModelState.IsValid)
             {
-                _context.Add(empleado);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                IdentityUser user = new();
+                user.Email = user.UserName = empleado.Email;
+                var result = await _userManager.CreateAsync(user, "Password1!");
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "EMPLEADO");
+
+                    _context.Add(empleado);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(empleado);
             }
             return View(empleado);
         }
@@ -123,7 +136,16 @@ namespace _20241CYA12A_G2.Controllers
 
         private bool EmpleadoExists(int id)
         {
-          return (_context.Empleado?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Empleado?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private async Task<int> GenerarLegajo()
+        {
+            var empleado = await _context.Empleado.OrderByDescending(c => c.Legajo).FirstOrDefaultAsync();
+
+            if (empleado == null) { return 99000; }
+
+            return empleado.Legajo + 1;
         }
     }
 }

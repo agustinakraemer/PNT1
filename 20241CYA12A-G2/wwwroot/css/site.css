@@ -96,3 +96,20 @@ body {
             font-weight: 700;
             color: #FFDE59;
         }
+
+.boton-confirmacion {
+
+    background-color: #444444 
+    color: red;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.mensaje-confirmacion {
+    display: none;
+    margin-top: 10px;
+    color: green;
+    font-weight: bold;
+}

@@ -76,7 +76,13 @@ namespace _20241CYA12A_G2.Controllers
                 var numeroDia = (int)DateTime.Today.DayOfWeek;
                 var descuento = await _context.Descuento.Include(d => d.Producto).FirstOrDefaultAsync(d => d.ProductoId == productoId && d.Activo == true && d.Dia == numeroDia);
 
-                // TERMINAR
+                // porcentaje
+
+                if (descuento != null)
+                {
+                    decimal porcentajeDescuento = (item.PrecioUnitarioConDescuento * (descuento.Porcentaje / 100));
+                    item.PrecioUnitarioConDescuento -= porcentajeDescuento;
+                }
 
                 decimal precioProducto = producto.Precio;
 
@@ -92,15 +98,6 @@ namespace _20241CYA12A_G2.Controllers
             }
             else             //buscar descuento
             {
-                //var descuento = item.Producto.Descuentos.FirstOrDefault(c => c.Producto.Id == productoId);
-                //if (descuento != null)
-                //{
-                //    decimal porentajeDescuento = (item.PrecioUnitarioConDescuento * (descuento.Porcentaje / 100));
-                //    item.PrecioUnitarioConDescuento -= porentajeDescuento;
-
-
-
-                //}
                 item.Cantidad++;
                 _context.Update(item);
                 await _context.SaveChangesAsync();

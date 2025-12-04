@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace _20241CYA12A_G2.Controllers
 {
+    [Authorize(Roles = "ADMIN")]
     public class EmpleadosController : Controller
     {
         private readonly DbContext _context;

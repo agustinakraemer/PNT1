@@ -59,6 +59,7 @@ namespace _20241CYA12A_G2.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "CLIENTE")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,NombreConmpleto,Email,Telefono,DetalleReclamo,PedidoId")] Reclamo reclamo)
         {
@@ -73,6 +74,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
         // GET: Reclamos/Edit/5
+        [Authorize(Roles = "EMPLEADO")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Reclamo == null)
@@ -93,6 +95,7 @@ namespace _20241CYA12A_G2.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "EMPLEADO")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,NombreConmpleto,Email,Telefono,DetalleReclamo,PedidoId")] Reclamo reclamo)
         {
@@ -126,6 +129,7 @@ namespace _20241CYA12A_G2.Controllers
         }
 
         // GET: Reclamos/Delete/5
+        [Authorize(Roles = "EMPLEADO")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Reclamo == null)
@@ -146,6 +150,7 @@ namespace _20241CYA12A_G2.Controllers
 
         // POST: Reclamos/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "EMPLEADO")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
